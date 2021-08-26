@@ -1,0 +1,54 @@
+.contact {
+    cursor: pointer;
+    padding: 10px 20px;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.align-items-center {
+    align-items: center !important;
+}
+
+.flex-1 {
+    flex: 1 1 !important;
+}
+
+.dropdown, .nav-item {
+    cursor: pointer;
+}
+ .dropend, .dropstart {
+    position: relative;
+}
+ .dropdown{
+     position: absolute;
+     /*bottom: 4rem;*/
+     width: 8rem;
+     right: 2rem;
+     background-color: white;
+     box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.32);
+ }
+.dropdown_item{
+    display: block;
+    padding: .35rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: center;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+.contact_h5 {
+    font-size: 14px !important;
+    margin: 0 !important;
+    color: #495057;
+    font-family: "Public Sans", sans-serif;
+    font-weight: 600;
+    padding: 10px 20px;
+}
+.fa-ellipsis-v{
+    color: #7a7f9a ;
+    padding: .25rem .25rem;
+}

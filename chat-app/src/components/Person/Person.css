@@ -1,0 +1,39 @@
+.conversation{
+    box-sizing: border-box;
+
+}
+.flex-container{
+    display: flex;
+    padding: 20px 15px;
+}
+.flex-container:hover{
+    background-color: rgba(45, 136, 255, 0.1);
+    border-radius: 5px;
+}
+.flex-container .time{
+    font-size: 0.8em;
+}
+.flex-container.active{
+    background-color:rgba(45, 136, 255, 0.1);
+    border-radius: 5px;
+}
+
+.content {
+    flex: 1 1;
+}
+.content .unread{
+    color: blue;
+}
+.content h5{
+    margin-top:0;
+    margin-left: 0;
+    line-height: 1.8;
+    padding-left: 0!important;
+}
+
+.content p{
+    margin-top: 0;
+    font-size: 14px;
+    margin-bottom: 0
+}
+

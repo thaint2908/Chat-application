@@ -1,0 +1,75 @@
+.modal-background{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    z-index: 10;
+    background-color: rgba(0,0,0,0.35);
+    width: 100%;
+    height: 100vh;
+}
+.modal-background .modal-container{
+    background-color: #ffffff;
+    width: fit-content;
+    border-radius: 5px;
+    padding: 1.5rem 1.5rem 0.25rem;
+}
+.modal-background .modal-container .modal-header{
+    border-bottom: 1px solid #f0eff5;
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 1em;
+    margin-bottom: 0.7em;
+}
+.modal-background .modal-container .modal-header h3 {
+    flex-grow: 1;
+    margin: 0;
+}
+.modal-background .modal-container .modal-header .exit-icon{
+    margin-top: 0.35em;
+    cursor: pointer;
+
+}
+.modal-background .modal-container .modal-main{
+    display: flex;
+    flex-direction: column;
+    width: 384px;
+    padding:0.7em;
+
+}
+.modal-background .modal-container .modal-main label {
+    margin-bottom: 0.7em;
+    text-decoration: none solid rgb(73,80,87);
+}
+.modal-background .modal-container .modal-main input{
+    padding: 8px 16px 8px 16px;
+    border: 1px solid #e6ebf5;
+}
+.modal-background .modal-container .modal-main input:focus{
+    outline: none;
+    border-color: #cfd4dd;
+}
+.modal-background .modal-container .modal-submit{
+    border-top: 1px solid #f0eff5;
+    margin-top: 0.7rem;
+    display: flex;
+    align-items: center;
+    padding:0.75rem;
+    justify-content: flex-end;
+}
+.modal-submit .err{
+    flex: 1;
+    color: red;
+    background-color: white;
+    padding-bottom: 0.35rem;
+
+}
+.modal-background .modal-container .modal-submit button{
+    width: fit-content;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    background-color: #7269EF;
+    padding: 0.75rem;
+    color: #ffffff;
+}

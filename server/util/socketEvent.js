@@ -1,0 +1,18 @@
+const SEND_MESSAGE ="SEND_MESSAGE"
+const TYPING ="TYPING"
+const IS_READ = "IS_READ"
+const STATUS = "STATUS"
+const JOIN = "JOIN"
+const OUT_ROOM = "OUT_ROOM"
+const RECEIVED_MESSAGE = "RECEIVED_MESSAGE"
+const TEST = "TEST"
+module.exports = {
+    TEST,
+    SEND_MESSAGE,
+    TYPING,
+    IS_READ,
+    STATUS,
+    RECEIVED_MESSAGE,
+    JOIN,
+    OUT_ROOM,
+}

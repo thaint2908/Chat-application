@@ -1,0 +1,108 @@
+.side-menu{
+    min-width: 75px;
+    max-width: 75px;
+    height: 100vh;
+    min-height: 570px;
+    background-color: #fff;
+    display: flex;
+    z-index: 9;
+    box-shadow: 0 2px 4px rgba(15 34 58 12);
+}
+.side-menu .navbar-brand-box {
+    text-align: center;
+}
+.side-menu .navbar-brand-box .logo{
+    line-height: 70px;
+    color: #7269ef;
+}
+.side-menu-nav .nav-item {
+    /*display: block;*/
+    margin: 7px 0;
+    cursor: pointer;
+}
+.side-menu-nav .nav-item.active{
+    background-color: #f7f7ff;
+    border-radius: 10px;
+}
+.side-menu-nav .nav-item.active .nav-link i{
+    color: #7269EF;
+}
+.side-menu-nav .nav-item .nav-link {
+    text-align: center;
+    font-size: 24px;
+    color: #878a92;
+    width: 56px;
+    height: 56px;
+    line-height: 56px;
+    margin: 0 auto;
+    border-radius: 8px;
+    padding: 0;
+}
+.nav-pills .nav-link {
+    background: none;
+    border: 0;
+    border-radius: .25rem;
+}
+.nav-link {
+    display: block;
+    padding: .5rem 1rem;
+    color: #7269ef;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
+.justify-content-center {
+    justify-content: center!important;
+}
+.my-auto {
+    margin-top: auto !important;
+    margin-bottom: auto !important;
+}
+.nav {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+.profile-user{
+    height: 2.2rem;
+    width: 2.2rem;
+    object-fit: cover;
+    border-radius: 50%;
+    vertical-align: middle
+}
+.d-none {
+    display: none !important;
+}
+img{
+    vertical-align: middle;
+}
+.dropup{
+    position: absolute;
+    bottom: 4rem;
+    width: 8rem;
+    left: 1rem;
+    background-color: white;
+    box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.32);
+}
+.dropup_item{
+    display: block;
+    padding: .35rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: center;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+}
+@media (min-width: 992px) {
+    .me-lg-1{
+        margin-right: .25rem!important;
+    }
+    .flex-lg-column{
+        flex-direction: column!important;
+    }
+    .d-lg-block {
+        display: block !important;
+    }
+}

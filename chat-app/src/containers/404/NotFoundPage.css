@@ -1,0 +1,10 @@
+.notFoundPage{
+    display: grid;
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+.notFoundPage span{
+    font-size: 4rem;
+}

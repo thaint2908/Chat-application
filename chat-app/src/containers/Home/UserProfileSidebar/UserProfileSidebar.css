@@ -1,0 +1,39 @@
+.user_profile{
+    border-left: 4px solid #f0eff5;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 380px;
+    min-width: 380px;
+}
+.up_close{
+    padding: 1.5rem ;
+    text-align: right
+}
+.up_button{
+    height: 40px;
+    width: 40px;
+    background-color: white;
+    border: 0;
+    cursor: pointer;
+}
+.fa-times{
+    color: #7a7f9a;
+}
+.up_avt{
+    text-align: center;
+}
+.up_img{
+    object-fit: cover;
+    background-color: #f7f7ff;
+    border: 1px solid #f0eff5;
+    padding: 0.25rem;
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+}
+.fa-dot-circle{
+    margin-right: .25rem;
+    font-size: 10px;
+    color: #06d6a0;
+}
