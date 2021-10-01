@@ -40,7 +40,6 @@ export const loginAuth = (email, password) => {
                 dispatch(loading());
                 dispatch(clearError());
                 const jwtData = jwtDecode(res.data.token);
-                console.log(Date.now())
                 const userId = jwtData.userId;
                 const email = jwtData.email;
                 const expiresIn = jwtData.exp;

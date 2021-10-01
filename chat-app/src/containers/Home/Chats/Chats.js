@@ -12,6 +12,7 @@ import { RECEIVED_MESSAGE } from '../../../socket/socketEvent';
 import conversation from '../../../store/reducers/conversation';
 import {getContactsAction} from "../../../store/actions/user";
 import senderInfo from "../../../util/senderInfo";
+import {logoutAuth} from "../../../store/actions/auth";
 
 const Chats = () => {
     const conversations = useSelector(state => state.conversation.conversations)
@@ -39,7 +40,7 @@ const Chats = () => {
         if (conversations && conversations.length > 0 && conversationActiveId === '') {
             dispatch(conversationActive(conversations[0]._id));
         }
-    }, [conversations, dispatch, conversationActiveId]);
+    }, [conversations, conversationActiveId]);
     
     useEffect(() => {
         socket.on(RECEIVED_MESSAGE, data => {
@@ -84,15 +85,14 @@ const Chats = () => {
                 <h5>Recent</h5>
                 <div className="ms_people">
                     {
-                        conversations ?
-                            conversations.map(conversation => {
+                        conversations ? conversations.map(conversation => {
                                 if (conversation.messages[0]) {
                                     let avatarUrl,status;
-                                    const message = conversation.messages[conversation.messages.length - 1];
+                                    const message = conversation.last_message;
                                     avatarUrl =  senderInfo(conversation.members,user.userId).avatar;
                                     status =  senderInfo(conversation.members,user.userId).status;
                                     const senders = nameOfBoxChat(conversation.members, user.userId).usernames
-                                    return <Person id={conversation._id} senders={senders} message={message} avatarUrl={avatarUrl}
+                                    return <Person id={conversation._id} senders={senders}  message={message} avatarUrl={avatarUrl}
                                                   status={status}  key={conversation._id}/>
                                 }
                             }) : null

@@ -39,7 +39,6 @@ const editProfileReducer = (state,action) =>{
         name:action.name,
         birthday: action.birthday,
         phoneNumber: action.phoneNumber,
-
     }
 }
 const getProfileReducer = (state,action) =>{
@@ -50,7 +49,7 @@ const getProfileReducer = (state,action) =>{
         email:action.data.email,
         birthday: action.data.birthday,
         phoneNumber: action.data.phoneNumber,
-        status:true,
+        status:action.data.status,
     }
 }
 export const user = (state = initialState, action) => {

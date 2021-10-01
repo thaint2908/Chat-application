@@ -31,7 +31,7 @@ const fileFilter = (req, file, cb) => {
         cb(null, false);
     }
 };
-const  fileStorage = multer.diskStorage({ // storage
+const  fileStorage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, __dirname + '/public');
     },
@@ -40,8 +40,8 @@ const  fileStorage = multer.diskStorage({ // storage
         cb(null, Date.now()+ '-' + file.originalname);
     }
 });
-app.use(multer({storage:fileStorage}).single("avatar"));
-// app.use(multer({storage: fileStorage}).array('content'));
+// app.use(multer({storage:fileStorage}).single("avatar"));
+app.use(multer({storage: fileStorage}).array('content'));
 
 
 app.use('/users',userRouter);

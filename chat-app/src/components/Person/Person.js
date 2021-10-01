@@ -14,11 +14,15 @@ const Person = (props) => {
     const userId = useSelector(state => state.auth.user.userId);
     const date = new Date(message.date);
     const handleClick = () => {
-        dispatch(getActiveConversation(id));
+        if(conversationIdActive!==id){
+            dispatch(getActiveConversation(id));
+        }
         message.is_read  = 1;
 
     };
-
+    if(message.kind === "image"){
+        message.content = "Tin nhắn ảnh";
+    }
     if(message.sender===userId || conversationIdActive === props.id){
        message.is_read = 1;
     }

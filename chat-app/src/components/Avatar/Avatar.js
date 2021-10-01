@@ -3,10 +3,8 @@ import React from "react";
 import './Avatar.css'
 
 const Avatar = (props) =>{
-    let url = "http://localhost:8080/public/img_201506032132336642-758d7.jpg"
-    if(props.avatarUrl){
-        url = "http://localhost:8080/public/" + props.avatarUrl;
-    }
+
+       const url = "http://localhost:8080/public/" + (props.avatarUrl  || "img_201506032132336642-758d7.jpg")
     return(
         <div className="user" >
             <img src={url} className="avt" alt="Avatar"/>

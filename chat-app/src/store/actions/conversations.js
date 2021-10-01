@@ -17,7 +17,7 @@ export const allConversationsAction = (data) => {
         data
     }
 }
-export const conversationMessageAction = (data) => {
+export const conversationMessage = (data) => {
     return {
         type: actionTypes.CONVERSATION_MESSAGE,
         data
@@ -35,10 +35,10 @@ export const addMessageAction = (message) => {
 export const getActiveConversation = (id) => {
     return dispatch => {
         dispatch(loading());
-        getConversation(id)
+        getConversation(id,1)
             .then(data => {
                 dispatch(loaded());
-                dispatch(conversationActive(data._id));
+                dispatch(conversationActive(id));
             })
             .catch(err => {
                 console.log(err);
@@ -46,8 +46,17 @@ export const getActiveConversation = (id) => {
             })
     }
 };
-
-
-export const receiverMessageAction = (data) => {
-
+export const  conversationMessageAction = (conversationActiveId, page = 1) =>{
+    return dispatch =>{
+        dispatch(loading());
+        getConversation(conversationActiveId, page)
+            .then(res => {
+                dispatch(loaded());
+                dispatch(conversationMessage(res));
+            })
+            .catch(err => {
+                console.log(err);
+                dispatch(createError(err));
+            })
+    }
 }

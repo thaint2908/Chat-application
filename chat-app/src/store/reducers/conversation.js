@@ -6,6 +6,7 @@ const initialState = {
     conversationActiveId: '',
     conversations: null,
     conversation: null,
+    messages:[],
 }
 
 const conversation = (state = initialState, action) => {
@@ -13,11 +14,14 @@ const conversation = (state = initialState, action) => {
         case actionTypes.CONVERSATION_ACTIVE:
             return {
                 ...state,
+                messages: [],
                 conversationActiveId: action.conversationId,
+
             }
         case actionTypes.CONVERSATION_DELETE:
             return {
                 ...state,
+
                 conversationActiveId: '',
             }
         case actionTypes.ALL_CONVERSATION:
@@ -28,17 +32,26 @@ const conversation = (state = initialState, action) => {
         case actionTypes.CONVERSATION_MESSAGE:
             return {
                 ...state,
-                conversation: action.data
+                messages:[
+                    ...state.messages,
+                    ...action.data.conversation.messages,
+
+                ],
+                conversation: action.data.conversation,
             }
         case actionTypes.ADD_MESSAGE:
             return  {
                 ...state,
+                messages: [
+                    action.message,
+                    ...state.messages,
+                ],
                 conversation: {
                     ...state.conversation,
                     last_message: action.message,
                     messages: [
-                        action.message,
                         ...state.conversation.messages,
+                        action.message
                     ],
                 }
             }

@@ -89,6 +89,7 @@
     font-size: 17px;
     color: #7269ef;
     z-index: 1;
+    cursor: pointer;
 }
 .fa-paperclip{
     margin: auto 2em auto 1em;
@@ -107,7 +108,7 @@
     flex-grow: 1;
     overflow: auto;
     border-bottom:1px solid rgb(240, 239, 245);
-    border-top:1px solid rgb(240, 239, 245);
+
 }
 .bc_messages::-webkit-scrollbar{
     width: 8px;

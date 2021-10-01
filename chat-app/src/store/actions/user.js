@@ -31,7 +31,6 @@ export const editProfile = (name, phoneNumber, birthday) => {
     }
 }
 export const editAvatar = (avatarUrl) => {
-    console.log(avatarUrl);
     return {
         type: actionTypes.EDIT_AVATAR,
         avatarUrl
@@ -58,7 +57,6 @@ export const getProfileAction = () => {
         getProfileApi()
             .then(res => {
                 dispatch(getProfile(res));
-                console.log(res);
                 dispatch(loaded());
             })
             .catch(err => {
@@ -79,8 +77,6 @@ export const editProfileAction = (name, phoneNumber, birthday) => {
         params.append("birthday", birthday);
         editProfileApi(params)
             .then(res => {
-                console.log(res);
-                console.log(res.birthday);
                 dispatch(editProfile(res.name, res.phoneNumber, res.birthday))
                 dispatch(loaded());
             })
@@ -96,7 +92,7 @@ export const editAvatarAction = (avatar) => {
     return dispatch => {
         dispatch(loading());
         const formData = new FormData();
-        formData.append("avatar", avatar);
+        formData.append("content", avatar);
         editAvatarApi(formData)
             .then(res => {
                 console.log(res);

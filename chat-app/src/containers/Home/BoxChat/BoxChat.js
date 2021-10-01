@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import './BoxChat.css';
 import {useDispatch, useSelector} from "react-redux";
-import {getAllConversations, getConversation, sendMessage} from "../../../api/convensations";
+import {getAllConversations, getConversation, sendImageMessage, sendMessage} from "../../../api/convensations";
 import senderInfo from "../../../util/senderInfo";
 import {useHistory} from "react-router";
 import Avatar from "../../../components/Avatar/Avatar";
@@ -10,6 +10,7 @@ import useOutsideAlerter from "../../../hook/useOutsideAlerter";
 import {createError} from "../../../store/actions/error";
 import Picker from "emoji-picker-react";
 import {RECEIVED_MESSAGE, SEND_MESSAGE} from "../../../socket/socketEvent";
+import InfiniteScroll from 'react-infinite-scroll-component';
 import socket from "../../../socket/socket";
 import {
     addMessageAction,
@@ -23,6 +24,7 @@ const BoxChat = () => {
     const [showPicker, setShowPicker] = useState(false);
     const refMessage = useRef(null);
     const refPicker = useRef(null);
+    const refImageMessage = useRef(null);
     const conversation = useSelector(state => state.conversation.conversation);
     const conversationActiveId = useSelector(state => state.conversation.conversationActiveId);
     const userId = useSelector(state => state.auth.user.userId);
@@ -30,13 +32,18 @@ const BoxChat = () => {
     const isAuth = useSelector(state => state.auth.user.authenticated);
     const err = useSelector(state => state.error);
     const [newMessage, setNewMessage] = useState(null);
-    const [message,setMessage] = useState(null)
-    
-    let sender,avatar,status;
+    const [message, setMessage] = useState(null);
+
+    const [hasMore, setHasMore] = useState(true);
+    const [conversationMessages, setConversationMessages] = useState([]);
+    const messages = useSelector(state => state.conversation.messages);
+
+    let sender, avatar, status, receiverId;
     if (conversation) {
         sender = senderInfo(conversation.members, userId).usernames;
         avatar = senderInfo(conversation.members, userId).avatar;
         status = senderInfo(conversation.members, userId).status;
+        receiverId = senderInfo(conversation.members, userId).id.toString();
     }
 
 
@@ -45,11 +52,11 @@ const BoxChat = () => {
     });
     const onEmojiClick = (event, emojiObject) => {
         refMessage.current.append(emojiObject.emoji);
-        setMessageValue(refMessage.current.innerText);
+        setMessageValue(refMessage.current.innerText.trim());
     }
 
     const handleInputMessage = (p) => {
-        setMessageValue(refMessage.current.innerText);
+        setMessageValue(refMessage.current.innerText.trim());
     }
 
 
@@ -66,35 +73,80 @@ const BoxChat = () => {
             handleSubmit(event);
         }
     }
-    
+    const handleImage = () => {
+        refImageMessage.current.click();
+    };
+    const handleImageInput = (e) => {
+
+
+        sendImageMessage(conversationActiveId, e.target.files)
+            .then(res => {
+                const message = {
+                    content: res.content,
+                    sender: userId,
+                    date:Date.now(),
+                    kind: "image",
+                    _id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+                }
+                const data = {
+                    ...message,
+                    receiverId: receiverId,
+                    conversationId: conversationActiveId,
+                }
+                socket.emit(SEND_MESSAGE, data);
+                dispatch(addMessageAction(message))
+            })
+            .catch(err => {
+                    console.log(err)
+                }
+            )
+    };
     const handleSubmit = (e) => {
         e.preventDefault();
         const message = {
             content: messageValue,
             sender: userId,
+            date: Date.now(),
+            kind: "text",
             _id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
         }
-        const receiverId = senderInfo(conversation.members, userId).id.toString();
         const data = {
             ...message,
             receiverId: receiverId,
             conversationId: conversationActiveId,
         }
-
         socket.emit(SEND_MESSAGE, data);
-        sendMessage(conversationActiveId, messageValue)
-            .then(res => {
-                console.log(res);
-                setMessage(res);
-                 dispatch(addMessageAction(message))
-            })
-            .catch(err => {
-                if (err.response) {
-                    dispatch(createError(err.response.data.message));
-                }
-            });
+        if (messageValue) {
+            sendMessage(conversationActiveId, messageValue)
+                .then(res => {
+                    setMessage(res);
+                    setMessageValue("");
+                    dispatch(addMessageAction(message))
+                })
+                .catch(err => {
+                    if (err.response) {
+                        dispatch(createError(err.response.data.message));
+                    }
+                });
+        }
         refMessage.current.innerHTML = "";
     };
+    const fetchMoreData = () => {
+        if (conversation.paging.cur_page < conversation.paging.total_page) {
+            dispatch(conversationMessageAction(conversationActiveId, conversation.paging.cur_page + 1));
+        } else {
+            setHasMore(false);
+        }
+    };
+    useEffect(() => {
+        if (conversation?.messages) {
+            setConversationMessages(prevMessages => [
+                ...prevMessages,
+                ...conversation.messages
+            ])
+        }
+
+    }, [conversation, conversation?.messages]);
 
     useEffect(() => {
         if (isAuth) {
@@ -106,11 +158,13 @@ const BoxChat = () => {
                     console.log(err)
                 });
         }
-    }, [message,isAuth]);
+    }, [message, isAuth]);
     useEffect(() => {
         socket.on(RECEIVED_MESSAGE, data => {
             const newMessage = {
                 content: data.content,
+                kind: data.kind,
+                date:data.date,
                 sender: data.sender,
                 _id: data._id,
                 conversationId: data.conversationId
@@ -134,19 +188,12 @@ const BoxChat = () => {
             history.push('/login');
         }
     }, [isAuth, err]);
-    
+
     useEffect(() => {
         if (conversationActiveId !== '') {
-            getConversation(conversationActiveId)
-                .then(res => {
-                    dispatch(conversationMessageAction(res))
-                })
-                .catch(err => {
-                    console.log(err);
-                })
+            dispatch(conversationMessageAction(conversationActiveId, 1))
         }
     }, [conversationActiveId]);
-    
     return (
         <div className='bc'>
             <div className="header">
@@ -160,11 +207,40 @@ const BoxChat = () => {
                     <i className="fas option fa-info-circle"/>
                 </div>
             </div>
-            <div className='bc_messages'>
-                {conversation && conversation.messages.map(m =>
-                    <TextMessage avatarUrl={avatar} status={status} message={m.content} id={m.sender} key={m._id}/>
-                )}
-            </div>
+            {/*<div className='bc_messages'>*/}
+            {/*    {conversation && conversation.messages.map(m =>*/}
+            {/*        <TextMessage avatarUrl={avatar} kind={m.kind} status={status} message={m.content} id={m.sender}*/}
+            {/*                     key={m._id}/>*/}
+            {/*    )}*/}
+            {/*</div>*/}
+            {conversation?.paging && conversation?.messages ?
+                <div
+                    id="scrollableDiv"
+                    style={{
+                        height: 300,
+                        overflow: 'auto',
+                        flexGrow:1,
+                        display: 'flex',
+                        flexDirection: 'column-reverse',
+                    }}
+                >
+                    <InfiniteScroll className="bc_messages"
+                                    next={fetchMoreData}
+                                    inverse={true}
+                                    hasMore={true}
+                                    loader={<h4>{conversation.paging.total_items - messages.length? "Loading...":null}</h4>}
+                                    dataLength={conversation.paging.total_items - messages.length}
+                                    scrollableTarget="scrollableDiv"
+                    >
+                        {
+                            messages && messages.map((m,index) =>
+                            <TextMessage prevMess={messages[index+1]} avatarUrl={avatar} kind={m.kind} status={status} date={m.date} message={m.content} id={m.sender}
+                                         key={m._id}/>
+                        )}
+                    </InfiniteScroll>
+                </div> : null
+            }
+
             <div className='bc_footer'>
                 <div className='bc_input'>
                 <span ref={refMessage} className='bc_input_message' onInput={handleInputMessage}
@@ -178,8 +254,8 @@ const BoxChat = () => {
                             </div>
                             : null}
                     </i>
-                    <input type="file" style={{display: "none"}}/>
-                    <i className="fas fa-image"/>
+                    <input multiple type="file" ref={refImageMessage} onChange={handleImageInput} hidden/>
+                    <i className="fas fa-image" onClick={handleImage}/>
                     <i className="fas fa-paperclip"/>
                     <button type='submit' onClick={handleSubmit} className='bc_button'>
                         <i className="fas fa-paper-plane"/>
@@ -188,5 +264,5 @@ const BoxChat = () => {
             </div>
         </div>
     );
-}
+};
 export default BoxChat;

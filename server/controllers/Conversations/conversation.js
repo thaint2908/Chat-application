@@ -3,6 +3,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 exports.postMessage = async (req, res) => {
     const contentType = req.get("Content-Type");
+    console.log(req)
     if (contentType.includes("application/x-www-form-urlencoded")) {
         return sendTextMessage(req, res);
     }
@@ -12,20 +13,19 @@ exports.postMessage = async (req, res) => {
 };
 exports.getAllConversations = async (req, res) => {
     const userId = req.userId;
-    const {receiverId,search} = req.query;
-    console.log("query:",req.query);
-    if(receiverId){
+    const {receiverId, search} = req.query;
+    if (receiverId) {
         const conversation = await Conversation.findOne({
-            members: [ObjectId(userId),ObjectId(receiverId)],
+            members: [ObjectId(userId), ObjectId(receiverId)],
         })
         return res.status(200).json(conversation);
     }
-    if(search){
+    if (search) {
         const conversations = await Conversation.find({
-            members:ObjectId(userId)
+            members: ObjectId(userId)
         }).populate({
             path: "members",
-            match:{ name:search,_id:{$ne:userId}}
+            match: {name: search, _id: {$ne: userId}}
         });
         const selectedConversation = conversations.filter(conversation => {
             return conversation.members.length > 0;
@@ -38,32 +38,37 @@ exports.getAllConversations = async (req, res) => {
     }).populate("members")
     conversations.sort((a, b) => {
         const aMessagesLength = a.messages.length;
-        if (aMessagesLength===0){
+        if (aMessagesLength === 0) {
             return false
         }
         const bMessagesLength = b.messages.length;
         const aDate = new Date(a.messages[aMessagesLength - 1].date);
         const bDate = new Date(b.messages[bMessagesLength - 1].date);
-        return bDate-aDate;
+        return bDate - aDate;
     })
     return res.status(200).json(conversations);
 };
 
 exports.getConversation = async (req, res) => {
     const {conversationId} = req.params;
+    const page = Number(req.query.page);
     const userId = req.userId;
+    console.log("query:", req.query);
+    const limit = 7;
     let conversation = await Conversation.findOne({
         members: ObjectId(userId),
         _id: ObjectId(conversationId),
-    }).populate("members");
-    if(conversation){
-        conversation.messages.sort((a,b) =>{
+    }).populate({
+        path: "members",
+    })
+    if (conversation) {
+        conversation.messages.sort((a, b) => {
             const aDate = new Date(a.date);
             const bDate = new Date(b.date);
             return bDate - aDate;
         });
-        let index = conversation.messages.length-1;
-        while(index >0 && (conversation.messages[index].sender ===userId || (!conversation.messages[index].is_read && conversation.messages[index].sender !== userId))){
+        let index = conversation.messages.length - 1;
+        while (index > 0 && (conversation.messages[index].sender === userId || (!conversation.messages[index].is_read && conversation.messages[index].sender !== userId))) {
             conversation.messages[index].is_read = 1;
             index--;
         }
@@ -73,7 +78,21 @@ exports.getConversation = async (req, res) => {
     if (!conversation) {
         return res.status(401).json({messages: "Unauthorized Error"})
     }
-    return res.status(200).json(conversation);
+    const totalPage = Math.ceil(conversation.messages.length / limit);
+    const messages = conversation.messages.slice((page - 1) * limit, page * limit);
+    return res.status(200).json( {
+        conversation: {
+            ...conversation._doc,
+            messages,
+            paging: {
+                "total_page": totalPage,
+                "per_page":limit,
+                "cur_page":page,
+                "total_items": conversation.messages.length
+            }
+        },
+    });
+
 };
 exports.getMessageImages = async (req, res) => {
     const {conversationId} = req.params;
@@ -164,13 +183,15 @@ const sendFileMessage = async (req, res) => {
     content = filenames.join("|");
     const conversation = await Conversation.findById(conversationId);
 
-    // const messages = {
-    //     kind: kind,
-    //     date: Date.now(),
-    //     content: content,
-    //     sender: ObjectId(userId)
-    // };
-    // conversation.messages.push(messages);
-    // conversation.save();
-    return res.status(200).json(content);
+    const messages = {
+        kind: kind,
+        date: Date.now(),
+        content: content,
+        sender: ObjectId(userId)
+    };
+    console.log(messages)
+    conversation.messages.push(messages);
+    conversation.last_message = messages;
+    conversation.save();
+    return res.status(200).json({content: content});
 }
